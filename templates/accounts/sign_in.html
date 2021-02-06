@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+<!-- Halfmoon CSS -->
+<link href="https://cdn.jsdelivr.net/npm/halfmoon@1.1.1/css/halfmoon-variables.min.css" rel="stylesheet" />
+<!--
+  Or,
+  Use the following (no variables, supports IE11):
+  <link href="https://cdn.jsdelivr.net/npm/halfmoon@1.1.1/css/halfmoon.min.css" rel="stylesheet" />
+-->
+
+<!-- Halfmoon JS -->
+<script src="https://cdn.jsdelivr.net/npm/halfmoon@1.1.1/js/halfmoon.min.js"></script>
+
+</head>
+<body>
+    <center>
+    <h1>INSTAGRAM</h1>
+    <form action="" method="POST" class="w-400 mw-full"> {% csrf_token %} 
+        <!-- {{ form.as_p }} {% csrf_token %} 
+        <input type="submit" name="" value="CREATE" id=""> -->
+        {% load widget_tweaks %}
+            
+            
+       
+        <div  class="form-group">
+
+               
+            <label for="">USERNAME</label>
+            <input type="text" class="form-control" name="username" id="">
+           </div>
+           <div  class="form-group">
+
+              
+               <label for="">PASSWORD</label>
+               <input type="text" class="form-control" name="password" id="">
+              </div>
+           
+               <input type="submit" name="" value="create user" class="btn btn-primary" id="">
+               <p> new to insta? <a href='/accounts/signup/'>Sign Up</a> </p>
+
+    </form>
+</center>
+</body>
+</html>
