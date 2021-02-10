@@ -1,41 +1,41 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
 
-<!-- Halfmoon CSS -->
-<link href="https://cdn.jsdelivr.net/npm/halfmoon@1.1.1/css/halfmoon-variables.min.css" rel="stylesheet" />
-<!--
+    <!-- Halfmoon CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/halfmoon@1.1.1/css/halfmoon-variables.min.css" rel="stylesheet" />
+    <!--
   Or,
   Use the following (no variables, supports IE11):
   <link href="https://cdn.jsdelivr.net/npm/halfmoon@1.1.1/css/halfmoon.min.css" rel="stylesheet" />
 -->
 
-<!-- Halfmoon JS -->
-<script src="https://cdn.jsdelivr.net/npm/halfmoon@1.1.1/js/halfmoon.min.js"></script>
+    <!-- Halfmoon JS -->
+    <script src="https://cdn.jsdelivr.net/npm/halfmoon@1.1.1/js/halfmoon.min.js"></script>
 
 </head>
+
 <body>
     <center>
-    <h1>INSTAGRAM</h1>
-    <form action="" method="POST" class="w-400 mw-full"> {% csrf_token %} 
-        <!-- {{ form.as_p }} {% csrf_token %} 
+        <h1>INSTAGRAM</h1>
+        <form action="" method="POST" class="w-400 mw-full"> {% csrf_token %}
+            <!-- {{ form.as_p }} {% csrf_token %} 
         <input type="submit" name="" value="CREATE" id=""> -->
-        {% load widget_tweaks %}
-            {% for a in form %}
-            
-       
-            <div  class="form-group">
+            {% load widget_tweaks %} {% for a in form %}
 
-                {{ a.label }}
-                {% render_field a class="form-control" id="name" placeholder=a.label required="required" %}
-               </div>
+
+            <div class="form-group">
+
+                {{ a.label }} {% render_field a class="form-control" id="name" placeholder=a.label required="required" %}
+            </div>
             {% endfor %}
-               <input type="submit" name="" value="create user" class="btn btn-primary" id="">
-
-    </form>
-</center>
+            <input type="submit" name="" value="create user" class="btn btn-primary" id=""> {% if error %}
+            <p>No such user</p>{% endif %} </form>
+    </center>
 </body>
+
 </html>

@@ -122,7 +122,8 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 AUTH_USER_MODEL = 'accounts.UserAccounts'
-
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
 INTERNAL_IPS = [
    
     '127.0.0.1',

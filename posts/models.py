@@ -1,7 +1,9 @@
 from django.db import models
 from accounts.models import UserAccounts
+from django.db.models.signals import post_delete
 
 from django.contrib.auth import get_user_model
+from django.dispatch import receiver
 
 # Create your models here.
 class Post(models.Model):
@@ -10,6 +12,15 @@ class Post(models.Model):
     image = models.ImageField(upload_to="posts")
     create_at = models.DateTimeField(auto_now_add=True)
     modified_at = models.DateTimeField(auto_now=True)
+
+    def liked_users(self):
+        objects = Like.objects.filter(post=self).values_list('user', flat=True)
+        return objects
+
+
+@receiver(post_delete, sender=Post)
+def delete_post_image(sender, instance, *args, **kwargs):
+    instance.image.delete(False)
 
 
 class Like(models.Model):
@@ -31,4 +42,3 @@ class Comment(models.Model):
 class HashTag(models.Model):
     tag = models.CharField(max_length=40)
     post = models.ManyToManyField(Post)
-
