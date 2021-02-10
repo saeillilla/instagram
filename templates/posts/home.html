@@ -1,7 +1,7 @@
 {% extends 'posts/base.html' %} {% block content %}
 <center>
     <!-- {% for post in posts %} {{ post.id}} -->
-    {{request.user}}
+    <!-- {{request.user}} -->
     <!-- Card with no padding with multiple content containers nested inside of it -->
     <div class="w-600 mw-full">
         <!-- w-600 = width: 60rem (600px), mw-full = max-width: 100% -->
@@ -24,39 +24,120 @@
                     <span class="badge">
             <i class="fa fa-comments text-primary mr-5" aria-hidden="true"></i> 5 comments <!-- text-primary = color: primary-color, mr-5 = margin-right: 0.5rem (5px) -->
           </span>
-                    <a href="/posts/like/{{post.id}}/">
-                        <span class="badge ml-5"> <!-- ml-5 = margin-left: 0.5rem (5px) -->
-                        <i class="fa fa-heart text-danger mr-5" aria-hidden="true"></i> {{ post.post_likes.count }} <!-- text-danger = color: danger-color, mr-5 = margin-right: 0.5rem (5px) -->
-                      </span>
-                    </a>
-                </div>
-            </div>
-            <hr />
-            <!-- Second content container nested inside card (comments) -->
-            <div class="content">
-                <h2 class="content-title">
-                    Comments
-                </h2>
-                <div>
-                    <strong>John Doe</strong>
-                    <br /> Amazing picture! Great job!
+                    <!-- <button data-id='{{ post.id }}' class="like-btn ico {% if post.is_liked %} text-danger {% endif %} pl-0 border-0 bg-transparent font-size-22">
+            <i class="{% if post.is_liked %} fas {% else %} far {% endif %}fa-heart"></i>
+            {{ post.post_likes.count }}</button> -->
+
+
+
+                    <div class="mx-10 px-5 my-5">
+
+                        <!-- post button -->
+                        <div class="d-flex justify-content-between">
+                            <div>
+
+                                <button data-id='{{ post.id }}' class="like-btn ico {% if post.is_liked %} text-danger {% endif %} pl-0 border-0 bg-transparent font-size-22">
+                            <i class="{% if post.is_liked %} fas {% else %} far {% endif %}fa-heart"></i>
+                        </button>
+
+                                <button class="ico text-dark border-0 bg-transparent font-size-22"><i class="far fa-comment"></i></button>
+                                <button class="ico text-dark border-0 bg-transparent font-size-22"><i class="far fa-paper-plane"></i></button>
+                            </div>
+                            <div>
+                                <button class="ico text-dark border-0 bg-transparent font-size-22"><i class="far fa-bookmark"></i></button>
+                            </div>
+                        </div>
+
+                        <!-- post likes -->
+                        <p class="my-5 font-weight-semi-bold text-dark">{{ post.post_likes.count }} likes</p>
+
+                    </div>
                 </div>
                 <hr />
-                <div>
-                    <strong>Jane Doe</strong>
-                    <br /> This is beautiful.
+                <!-- Second content container nested inside card (comments) -->
+                {% if post.post_comments.count > 3 %}
+                <span class="text-gray font-size-14">View all {{ post.post_comments.count }} comments</span> {% endif %}
+
+                <div class="comments">
+                    {% for comment in post.post_comments.all|slice:":3" %}
+                    <div class="mt-5">
+                        <p class="my-0 text-dark d-inline-block">
+                            <span class="font-weight-semi-bold ">{{ comment.user.first_name }}</span>
+                            <span class="">
+                                {{ comment.comment }}
+                            </span>
+                        </p>
+                    </div>
+                    {% endfor %}
                 </div>
-                <hr />
-                <div>
-                    <strong>James Bucks</strong>
-                    <br /> This is just pretentious enough for my tastes. I love it.
-                </div>
-                <div class="text-center mt-20">
-                    <!-- text-center = text-align: center, mt-20 = margin-top: 2rem (20px) -->
-                    <button class="btn btn-sm">Load all comments</button>
+                <!-- end comments -->
+                <div class="d-none d-sm-flex mx-10 px-5 h-50">
+                    <button style="font-size: 24px;" class="ico text-dark pl-0 mr-5 border-0
+                                   bg-transparent">
+                        <i class="far fa-smile"></i>
+                    </button>
+                    <input class="d-block w-full ico border-0" placeholder="Add a comment..." type="text">
+                    <button data-id="{{ post.id }}" class="post-comment ico text-primary pl-0 border-0 bg-transparent font-weight-medium">Post</button>
                 </div>
             </div>
         </div>
-    </div>
-    {% endfor %}
-</center>{% endblock %}
+        {% endfor %}
+</center>
+<script>
+    $(document).ready(function() {
+        $('.post-comment').click(function() {
+            var id = $(this).data('id')
+            var comment_box = $(this).prev()
+            var post_btn = $(this)
+
+            function createComment(user, comment) {
+                return `<div class="mt-5">
+                            <p class="my-0 text-dark d-inline-block">
+                                <span class="font-weight-semi-bold ">${user}</span>
+                                <span class="">${comment}
+                                </span>
+                            </p>
+                        </div>`
+            }
+
+            if (comment_box.val() != '') {
+                $.post(`/posts/comment/add/`, {
+                        post_id: id,
+                        comment: comment_box.val()
+                    },
+                    function(response) {
+                        post_btn.parent().prev().prev().children('.comments')
+                            .append(createComment(response.user, response.comment))
+
+                        comment_box.val('')
+                    }
+                );
+            }
+        })
+        $('.like-btn').click(function() {
+            var id = $(this).data('id')
+            var icon = $(this).children('i')
+            var btn = $(this)
+
+            $.ajax(`/posts/like/${id}/`, {
+                method: 'GET',
+                processData: false,
+                contentType: false,
+                success(response) {
+                    if (response.status == 'like') {
+                        icon.removeClass('far')
+                        icon.addClass('fas')
+                        btn.addClass('text-danger')
+
+                    } else if (response.status == 'dislike') {
+                        icon.removeClass('fas')
+                        icon.addClass('far')
+                        btn.removeClass('text-danger')
+                    }
+                    btn.parent().parent().next().text(response.count + ' likes')
+                }
+            })
+        })
+    })
+</script>
+{% endblock %}
